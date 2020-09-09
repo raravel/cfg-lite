@@ -145,18 +145,18 @@ cfg.save();
 ## Result
 ```json
 {
-	a: {
-		b: {
-			c: 'Hello'
+	"a": {
+		"b": {
+			"c": "Hello"
 		},
-		c: 55
+		"c": 55
 	},
-	c: {
-		d: {
-			e: 'Hello'
+	"c": {
+		"d": {
+			"e": "Hello"
 		}
 	},
-	d: true
+	"d": true
 }
 ```
 ![](assets/png1.gif)
