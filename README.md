@@ -23,7 +23,7 @@ yarn add cfg-lite
 
 ### File Init
 
-If the file does not exist, it is new created.
+If the file does not exist, it is new created. And if the file extension does not exist, `.cfg` is automatically recognized.
 
 ```typescript
 import CfgLite from 'cfg-lite';

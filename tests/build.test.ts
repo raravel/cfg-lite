@@ -1,6 +1,6 @@
 import CfgLite from '../src';
 
-const testCfg = new CfgLite('./cfg.cfg');
+const testCfg = new CfgLite('./cfg');
 testCfg.set('a.b.c', 'Hello');
 testCfg.set('c.d.e', testCfg.get('a.b.c'));
 testCfg.set('a.c', 55);

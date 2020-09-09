@@ -32,6 +32,10 @@ export default class CfgLite {
 	constructor(private cfgFile: string) {
 		this.cfg = {};
 
+		if ( path.extname(this.cfgFile) === '' ) {
+			this.cfgFile += '.cfg';
+		}
+
 		if ( fs.existsSync(this.cfgFile) ) {
 			try {
 				const str = fs.readFileSync(this.cfgFile, { encoding: UpdateType.HEX });
