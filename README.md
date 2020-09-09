@@ -117,6 +117,7 @@ cfg data
 {
 	key1: 'hello'
 }
+*/
 
 cfg.delete('key1');
 
