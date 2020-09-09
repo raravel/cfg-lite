@@ -135,7 +135,7 @@ export default class CfgLite {
 		setObject(sk, value, this.cfg);
 	}
 
-	public overwrite(key: string, value: any) {
+	public merge(key: string, value: any) {
 		if ( !key ) {
 			throw Error('key is not valid');
 		}
