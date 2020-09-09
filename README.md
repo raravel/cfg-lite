@@ -159,7 +159,7 @@ cfg.save();
 	"d": true
 }
 ```
-![](assets/png1.gif)
+![](assets/pic1.png)
 
 
 Thanks.
