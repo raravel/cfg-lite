@@ -1,0 +1,30 @@
+{
+	"name": "cfg-lite",
+	"version": "1.0.0",
+	"author": "",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "mocha -r ts-node/register ./tests/*.test.ts  --trace-warnings",
+		"build": "tsc"
+	},
+	"keywords": [],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Tree-Some/cfg-lite.git"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.2.3",
+		"@types/lodash": "^4.14.161",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.7.11",
+		"chai": "^4.2.0",
+		"mocha": "^6.2.1",
+		"ts-node": "^8.4.1",
+		"typescript": "^3.6.3"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"lodash": "^4.17.20"
+	}
+}
