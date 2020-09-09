@@ -11,3 +11,5 @@ testCfg.delete('a.c');
 console.log(testCfg.get());
 testCfg.deleteAll();
 console.log(testCfg.get());
+
+testCfg.save('./b', true);

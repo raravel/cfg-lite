@@ -141,6 +141,8 @@ To save the changes to a file you need to use the following function.
 
 ```javascript
 cfg.save();
+cfg.save('new.cfg'); // New save, Leave before cfg file
+cfg.save('new.cfg', true); // New save, Remove before cfg file
 ```
 
 ## Result

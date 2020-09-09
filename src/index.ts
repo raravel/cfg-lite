@@ -30,11 +30,8 @@ export default class CfgLite {
 	private time: string = '';
 
 	constructor(private cfgFile: string) {
+		this.__check_ext();
 		this.cfg = {};
-
-		if ( path.extname(this.cfgFile) === '' ) {
-			this.cfgFile += '.cfg';
-		}
 
 		if ( fs.existsSync(this.cfgFile) ) {
 			try {
@@ -55,6 +52,12 @@ export default class CfgLite {
 			this.time = Date.now().toString();
 			this.hash = this.time + shaHash(path.basename(this.cfgFile), this.time.length);
 			this.save();
+		}
+	}
+
+	private __check_ext() {
+		if ( path.extname(this.cfgFile) === '' ) {
+			this.cfgFile += '.cfg';
 		}
 	}
 
@@ -110,7 +113,16 @@ export default class CfgLite {
 	}
 
 
-	public save() {
+	public save(file?: string, removeBefore: boolean = false) {
+		const beforeCfgFile = this.cfgFile;
+		if ( file ) {
+			if ( removeBefore && file === this.cfgFile ) {
+				removeBefore = false;
+			}
+			this.cfgFile = file;
+		}
+		this.__check_ext();
+
 		const cfgStr = JSON.stringify(this.cfg);
 		const cfgEnc = this.__encoding(cfgStr, UpdateType.HEX);
 		const ivStr = this.iv.toString('hex');
@@ -121,6 +133,10 @@ export default class CfgLite {
 			this.time.length.toString().padStart(4, '0') +
 			this.time.toString() +
 			cfgEnc + '0', { encoding: UpdateType.HEX });
+
+		if ( removeBefore ) {
+			fs.unlinkSync(beforeCfgFile);
+		}
 		return;
 	}
 
