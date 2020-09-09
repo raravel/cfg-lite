@@ -8,7 +8,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { shaHash, randomBytes, getObject, setObject, writeObject, deleteObject } from './utils';
+import { IV_LENGTH, shaHash, randomBytes, getObject, setObject, writeObject, deleteObject } from './utils';
 import { cloneDeep } from 'lodash';
 
 enum UpdateType {
@@ -29,23 +29,33 @@ export default class CfgLite {
 	private iv!: Buffer;
 	private time: string = '';
 
-	constructor(private cfgFile: string) {
+	constructor(private cfgFile: string, private privKey: string = '') {
 		this.__check_ext();
 		this.cfg = {};
 
+		if ( this.privKey.length > (IV_LENGTH * 2) ) {
+			throw Error('The string is too long.');
+		}
+
 		if ( fs.existsSync(this.cfgFile) ) {
+			let str = '';
+			let parse: any = {};
 			try {
-				const str = fs.readFileSync(this.cfgFile, { encoding: UpdateType.HEX });
-				const parse = this.__parse(str);
+				str = fs.readFileSync(this.cfgFile, { encoding: UpdateType.HEX });
+				parse = this.__parse(str);
+			} catch {
+				throw Error('Cannot parse cfg file.');
+			}
 
-				this.iv = Buffer.from(parse.ivStr, 'hex');
-				this.time = parse.time;
-				this.hash = parse.hash;
+			this.iv = Buffer.from(parse.ivStr, 'hex');
+			this.time = parse.time;
+			this.hash = parse.hash;
 
+			try {
 				const cfgStr = this.__decoding(parse.cfg, UpdateType.HEX);
 				this.cfg = JSON.parse(cfgStr);
-			} catch(err) {
-				throw err;
+			} catch {
+				throw Error('Fail to decoding cfg contents.');
 			}
 		} else {
 			this.iv = randomBytes();
@@ -53,6 +63,11 @@ export default class CfgLite {
 			this.hash = this.time + shaHash(path.basename(this.cfgFile), this.time.length);
 			this.save();
 		}
+	}
+
+	private __get_hash() {
+		const str = this.privKey + this.hash;
+		return str.substring(0, IV_LENGTH * 2);
 	}
 
 	private __check_ext() {
@@ -94,7 +109,7 @@ export default class CfgLite {
 	}
 
 	private __encoding(str: string, type: any = UpdateType.BINARY) {
-		const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(this.hash, 'utf8'), this.iv);
+		const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
 		let result = cipher.update(str, 'utf8', type);
 		result += cipher.final(type);
 		return result;
@@ -102,7 +117,7 @@ export default class CfgLite {
 
 
 	private __decoding(str: string, type: any = UpdateType.BINARY) {
-		const decipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(this.hash, 'utf8'), this.iv);
+		const decipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
 		let result = decipher.update(str, type, 'utf8');
 		result += decipher.final('utf8');
 		return result;
