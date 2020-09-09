@@ -25,10 +25,14 @@ yarn add cfg-lite
 
 If the file does not exist, it is new created. And if the file extension does not exist, `.cfg` is automatically recognized.
 
+
+You can specify a unique value of up to 32 characters.
+
 ```typescript
 import CfgLite from 'cfg-lite';
 
 const cfg = new CfgLite('/path/to/file.cfg');
+const uniqueCfg = new CfgLite('/path/to/file', 'MyUniqueKey');
 ```
 
 ### Get
