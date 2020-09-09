@@ -78,6 +78,7 @@ result cfg data
 		},
 	}
 }
+*/
 ```
 
 ### Merge
@@ -106,6 +107,7 @@ result cfg data
 		key4: 55
 	}
 }
+*/
 ```
 
 ### Delete
@@ -139,6 +141,25 @@ To save the changes to a file you need to use the following function.
 ```javascript
 cfg.save();
 ```
+
+## Result
+```json
+{
+	a: {
+		b: {
+			c: 'Hello'
+		},
+		c: 55
+	},
+	c: {
+		d: {
+			e: 'Hello'
+		}
+	},
+	d: true
+}
+```
+![](assets/png1.gif)
 
 
 Thanks.
