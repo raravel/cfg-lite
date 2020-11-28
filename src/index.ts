@@ -5,13 +5,9 @@
  * Copyright (c) Tree Some. Licensed under the MIT License.
  */
 
-let modules: any = {};
-if ( typeof window === 'undefined' ) {
-	modules = require('./node').default;
-} else {
-	// for electron
-	modules = window.require('./win');
-}
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { IV_LENGTH, shaHash, randomBytes, getObject, setObject, writeObject, deleteObject } from './utils';
 import { cloneDeep } from 'lodash';
 
@@ -41,11 +37,11 @@ export default class CfgLite {
 			throw Error('The string is too long.');
 		}
 
-		if ( modules.fs.existsSync(this.cfgFile) ) {
+		if ( fs.existsSync(this.cfgFile) ) {
 			let str = '';
 			let parse: any = {};
 			try {
-				str = modules.fs.readFileSync(this.cfgFile, { encoding: UpdateType.HEX });
+				str = fs.readFileSync(this.cfgFile, { encoding: UpdateType.HEX });
 				parse = this.__parse(str);
 			} catch {
 				throw Error('Cannot parse cfg file.');
@@ -64,7 +60,7 @@ export default class CfgLite {
 		} else {
 			this.iv = randomBytes();
 			this.time = Date.now().toString();
-			this.hash = this.time + shaHash(modules.path.basename(this.cfgFile), this.time.length);
+			this.hash = this.time + shaHash(path.basename(this.cfgFile), this.time.length);
 			this.save();
 		}
 	}
@@ -75,7 +71,7 @@ export default class CfgLite {
 	}
 
 	private __check_ext() {
-		if ( modules.path.extname(this.cfgFile) === '' ) {
+		if ( path.extname(this.cfgFile) === '' ) {
 			this.cfgFile += '.cfg';
 		}
 	}
@@ -102,7 +98,7 @@ export default class CfgLite {
 
 		let cfg = str.slice(idx, idx + str.length);
 		cfg = cfg.slice(0, -1); // remove zero
-		const hash = time + shaHash(modules.path.basename(this.cfgFile), timeLen);
+		const hash = time + shaHash(path.basename(this.cfgFile), timeLen);
 
 		return {
 			ivStr,
@@ -113,7 +109,7 @@ export default class CfgLite {
 	}
 
 	private __encoding(str: string, type: any = UpdateType.BINARY) {
-		const cipher = modules.crypto.createCipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
+		const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
 		let result = cipher.update(str, 'utf8', type);
 		result += cipher.final(type);
 		return result;
@@ -121,7 +117,7 @@ export default class CfgLite {
 
 
 	private __decoding(str: string, type: any = UpdateType.BINARY) {
-		const decipher = modules.crypto.createDecipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
+		const decipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(this.__get_hash(), 'utf8'), this.iv);
 		let result = decipher.update(str, type, 'utf8');
 		result += decipher.final('utf8');
 		return result;
@@ -145,7 +141,7 @@ export default class CfgLite {
 		const cfgStr = JSON.stringify(this.cfg);
 		const cfgEnc = this.__encoding(cfgStr, UpdateType.HEX);
 		const ivStr = this.iv.toString('hex');
-		modules.fs.writeFileSync(
+		fs.writeFileSync(
 			this.cfgFile,
 			ivStr.length.toString().padStart(4, '0') +
 			ivStr +
@@ -154,7 +150,7 @@ export default class CfgLite {
 			cfgEnc + '0', { encoding: UpdateType.HEX });
 
 		if ( removeBefore ) {
-			modules.fs.unlinkSync(beforeCfgFile);
+			fs.unlinkSync(beforeCfgFile);
 		}
 		return;
 	}
