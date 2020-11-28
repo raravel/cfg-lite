@@ -5,12 +5,18 @@
  * Copyright (c) Tree Some. Licensed under the MIT License.
  */
 
-import * as crypto from 'crypto';
+let modules: any = {};
+if ( typeof window === 'undefined' ) {
+	modules = require('./node').default;
+} else {
+	// for electron
+	modules = window.require('./win');
+}
 
 export const IV_LENGTH = 16;
 
-export const shaHash = (str: string, pad: number=0) => crypto.createHash('sha256').update(str).digest('hex').substring(0, (IV_LENGTH*2) - pad);
-export const randomBytes = () => crypto.randomBytes(IV_LENGTH);
+export const shaHash = (str: string, pad: number=0) => modules.crypto.createHash('sha256').update(str).digest('hex').substring(0, (IV_LENGTH*2) - pad);
+export const randomBytes = () => modules.crypto.randomBytes(IV_LENGTH);
 
 export const getObject = (key: string|string[], obj: any, midx: number = 0, rtn: any = obj): any => {
 	if ( Array.isArray(key) ) {
