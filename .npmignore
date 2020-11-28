@@ -1,0 +1,9 @@
+.npmignore
+.gitignore
+.git
+*.cfg
+tests
+src
+node_modules
+tsconfig.json
+yarn.lock
