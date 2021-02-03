@@ -1,8 +1,9 @@
-src/
-node_modules/
-tests/
+.npmignore
+.gitignore
+.git
+*.cfg
+tests
+src
+node_modules
 tsconfig.json
 yarn.lock
-.git
-.gitignore
-.npmignore
