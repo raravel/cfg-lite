@@ -169,4 +169,17 @@ cfg.save('new.cfg', true); // New save, Remove before cfg file
 ![](assets/pic1.png)
 
 
+### Command line
+
+Global install
+```
+npm install -g cfg-lite
+```
+
+### Decoding commed
+
+```sh
+cfg [cfg file] [key]
+```
+
 Thanks.

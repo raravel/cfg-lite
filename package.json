@@ -1,17 +1,18 @@
 {
 	"name": "cfg-lite",
-	"version": "1.0.0",
-	"author": "",
-	"description": "",
+	"version": "1.1.0",
+	"author": "raravel",
+	"description": "A secure management config file",
 	"main": "index.js",
 	"scripts": {
 		"test": "mocha -r ts-node/register ./tests/*.test.ts  --trace-warnings",
 		"build": "tsc"
 	},
-	"keywords": [],
+	"bin": { "cfg": "./dist/cli.js" },
+	"keywords": ["config", "encryption", "json"],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Tree-Some/cfg-lite.git"
+		"url": "https://github.com/raravel/cfg-lite.git"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.3",
