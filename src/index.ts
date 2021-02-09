@@ -65,6 +65,14 @@ export default class CfgLite {
 		}
 	}
 
+	get Filename() {
+		return this.cfgFile;
+	}
+
+	get Key() {
+		return this.privKey;
+	}
+
 	private __get_hash() {
 		const str = this.privKey + this.hash;
 		return str.substring(0, IV_LENGTH * 2);
@@ -164,6 +172,10 @@ export default class CfgLite {
 
 	public set(key: string, value: any) {
 		if ( !key ) {
+			if ( key === '' && typeof value === 'object' ) {
+				this.cfg = value;
+				return;
+			}
 			throw Error('key is not valid');
 		}
 		const sk = key.split('.');
