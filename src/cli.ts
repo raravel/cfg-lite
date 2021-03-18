@@ -73,6 +73,7 @@ const parsingArgv = (argv: string[]) => {
 };
 
 const isV = () => options['verbose'];
+const verbose = (...args) => isV() && console.log(...args);
 
 const argv = process.argv.slice(2);
 if ( argv.length < 2 ) {
@@ -98,20 +99,20 @@ const readJson = (p: string) => {
 }
 
 if ( options['mode'] === MODE.ENCRYPT ) {
-	isV() && console.log('Encryption mode');
+	verbose('Encryption mode');
 	const json = readJson(options['src']);
-	isV() && console.log('Read json file', json);
+	verbose('Read json file', json);
 	const cfg = new CfgLite(options['dst'], options['key']);
 	cfg.set('', json);
-	isV() && console.log('Setting json in cfg', cfg.get());
+	verbose('Setting json in cfg', cfg.get());
 	cfg.save();
-	isV() && console.log('Save done.', options['dst']);
+	verbose('Save done.', options['dst']);
 } else if ( options['mode'] === MODE.DECRYPT ) {
-	isV() && console.log('Decryption mode');
+	verbose('Decryption mode');
 	const cfg = new CfgLite(options['src'], options['key']);
-	isV() && console.log('Open cfg file', options['src']);
+	verbose('Open cfg file', options['src']);
 	const json = cfg.get();
-	isV() && console.log('Get json', json);
+	verbose('Get json', json);
 	console.log(JSON.stringify(json, null, '\t'));
 } else {
 	printHelp('Unknwon mode');
