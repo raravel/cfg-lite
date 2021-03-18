@@ -6,7 +6,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "mocha -r ts-node/register ./tests/*.test.ts  --trace-warnings",
-		"build": "tsc"
+		"build": "tsc && chmod 755 ./dist/cli.js"
 	},
 	"bin": { "cfg": "./dist/cli.js" },
 	"keywords": ["config", "encryption", "json"],

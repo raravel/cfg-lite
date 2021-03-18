@@ -14,6 +14,11 @@ const printHelp = (msg: string) => {
 	console.error('   -d --decrypt        Decrypt cfg file');
 	console.error('   -k --key            Cfg encryption key (AES-256)');
 	console.error('   -V --verbose        Print detail log');
+	console.error('');
+	console.error('cfg -d [options] <key> <value?> <cfg file src>');
+	console.error('   -I --insert         Insert data to encrypted file.');
+	console.error('   -U --update         Update data to encrypted file.');
+	console.error('   -D --delete         Delete data to encrypted file.');
 	process.exit(1);
 }
 
@@ -23,12 +28,21 @@ enum MODE {
 	DECRYPT = 2,
 }
 
+enum MODIFY {
+	INSERT = 'insert',
+	DELETE = 'delete',
+	UPDATE = 'update',
+}
+
 const options = {
 	mode: MODE.NONE,
 	key: '',
 	src: '',
 	dst: '',
 	verbose: false,
+	modify: '',
+	'modify-key': '',
+	'modify-value': '',
 };
 
 const parsingArgv = (argv: string[]) => {
@@ -45,6 +59,9 @@ const parsingArgv = (argv: string[]) => {
 						case '--encrypt': options['mode'] = MODE.ENCRYPT; break;
 						case '--decrypt': options['mode'] = MODE.DECRYPT; break;
 						case '--verbose': options['verbose'] = true; break;
+						case '--insert': options['modify'] = MODIFY.INSERT; options['modify-key'] = argv[++i]; options['modify-value'] = argv[++i]; break;
+						case '--update': options['modify'] = MODIFY.UPDATE; options['modify-key'] = argv[++i]; options['modify-value'] = argv[++i]; break;
+						case '--delete': options['modify'] = MODIFY.DELETE; options['modify-key'] = argv[++i]; break;
 						default: printHelp('Invalid Options');
 					}
 				}
@@ -58,6 +75,9 @@ const parsingArgv = (argv: string[]) => {
 						case 'd': options['mode'] = MODE.DECRYPT; break;
 						case 'k': options['key'] = argv[++i]; break;
 						case 'V': options['verbose'] = true; break;
+						case 'I': options['modify'] = MODIFY.INSERT; options['modify-key'] = argv[++i]; options['modify-value'] = argv[++i]; break;
+						case 'U': options['modify'] = MODIFY.UPDATE; options['modify-key'] = argv[++i]; options['modify-value'] = argv[++i]; break;
+						case 'D': options['modify'] = MODIFY.DELETE; options['modify-key'] = argv[++i]; break;
 						default: printHelp('Invalid Options');
 					}
 				}
@@ -73,7 +93,7 @@ const parsingArgv = (argv: string[]) => {
 };
 
 const isV = () => options['verbose'];
-const verbose = (...args) => isV() && console.log(...args);
+const verbose = (...args: any[]) => isV() && console.log(...args);
 
 const argv = process.argv.slice(2);
 if ( argv.length < 2 ) {
@@ -81,9 +101,7 @@ if ( argv.length < 2 ) {
 }
 parsingArgv(argv);
 
-if ( isV() ) {
-	console.log('Argv: ', argv);
-}
+verbose('Argv: ', argv);
 
 const readJson = (p: string) => {
 	if ( fs.existsSync(p) ) {
@@ -111,9 +129,27 @@ if ( options['mode'] === MODE.ENCRYPT ) {
 	verbose('Decryption mode');
 	const cfg = new CfgLite(options['src'], options['key']);
 	verbose('Open cfg file', options['src']);
-	const json = cfg.get();
-	verbose('Get json', json);
-	console.log(JSON.stringify(json, null, '\t'));
+
+	verbose('Modify option', options['modify']);
+	switch ( options['modify'] ) {
+		case MODIFY.INSERT:
+			if ( cfg.get(options['modify-key']) ) {
+				console.error(`Error: Already exists value. [${options['modify-key']}]`);
+				process.exit(1);
+			}
+		case MODIFY.UPDATE:
+			cfg.set(options['modify-key'], options['modify-value']);
+			cfg.save();
+			break;
+		case MODIFY.DELETE:
+			cfg.delete(options['modify-key']);
+			cfg.save();
+			break;
+		default:
+			const json = cfg.get();
+			verbose('Get json', json);
+			console.log(JSON.stringify(json, null, '\t'));
+	}
 } else {
 	printHelp('Unknwon mode');
 }
