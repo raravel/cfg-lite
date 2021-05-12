@@ -79,7 +79,7 @@ export const writeObject = (sk: string[], value: any, obj: any = {}, kidx: numbe
 		obj[skey] = {};
 	}
 
-	writeObject(obj[skey], kidx+1);
+	writeObject(sk, value, obj[skey], kidx+1);
 };
 
 export const deleteObject = (key: string, obj: any) => {
